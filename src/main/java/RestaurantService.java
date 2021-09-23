@@ -8,8 +8,7 @@ public class RestaurantService {
 
     public Restaurant findRestaurantByName(String restaurantName) throws restaurantNotFoundException {
         Optional<Restaurant> searchedRestaurantOpt = restaurants.stream().filter(restaurant -> restaurant.getName().equals(restaurantName)).findAny();
-        Restaurant searchedRestaurant = searchedRestaurantOpt.orElseThrow(() -> new restaurantNotFoundException("No Restaurant available with the name: " + restaurantName + "."));
-        return searchedRestaurant;
+        return searchedRestaurantOpt.orElseThrow(() -> new restaurantNotFoundException("No Restaurant available with the name: " + restaurantName + "."));
     }
 
 

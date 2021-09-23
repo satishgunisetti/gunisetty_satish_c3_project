@@ -1,14 +1,13 @@
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Restaurant {
-    private String name;
-    private String location;
+    private final String name;
+    private final String location;
     public LocalTime openingTime;
     public LocalTime closingTime;
-    private List<Item> menu = new ArrayList<Item>();
+    private final List<Item> menu = new ArrayList<Item>();
 
     public Restaurant(String name, String location, LocalTime openingTime, LocalTime closingTime) {
         this.name = name;
@@ -18,10 +17,7 @@ public class Restaurant {
     }
 
     public boolean isRestaurantOpen() {
-        if(getCurrentTime().isAfter(this.openingTime) && getCurrentTime().isBefore(this.closingTime)){
-            return true;
-        }
-        return false;
+        return getCurrentTime().isAfter(this.openingTime) && getCurrentTime().isBefore(this.closingTime);
     }
 
     public LocalTime getCurrentTime(){ return  LocalTime.now(); }
@@ -64,7 +60,33 @@ public class Restaurant {
         return name;
     }
 
-    public double getOrderValue(List<String> menuItems) {
-        return 0.0;
+    private boolean selectItemFromMenu(String menuItem){
+        boolean isMenuItemAvailable = false;
+        List<Item> menu = this.getMenu();
+        for(Item item: menu){
+            if(item.getName().equals(menuItem)){
+                isMenuItemAvailable = true;
+                item.setSelected(true);
+            }
+        }
+        return isMenuItemAvailable;
+    }
+
+
+    public double getOrderValue(List<String> selectedMenuItems) throws itemNotFoundException {
+        for(String menuItem: selectedMenuItems){
+            boolean isAvailable = this.selectItemFromMenu(menuItem);
+            if(!isAvailable)
+                throw new itemNotFoundException("Selected Item is not available on menu");
+        }
+
+        List<Item> menuItems = this.getMenu();
+        double totalOrderValue = 0.0;
+        for(Item item: menuItems){
+            if(item.isSelected()){
+                totalOrderValue += item.getPrice();
+            }
+        }
+        return totalOrderValue;
     }
 }
